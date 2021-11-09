@@ -68,6 +68,19 @@ app.post('/contacto', function(request, response) {
     )
 })
 
+app.get('/about', function(request, response) {
+  response.render('about')
+})
+
+app.post('/about', function(request, response) {
+  console.log(request.body.email)
+  // TODO Enviar mail con sendgrid
+  response.render(
+      'about',
+      {message: 'Te has suscrito', message_error: false}
+  )
+})
+
 app.get('/users/:user', function(request, response) {
     // TODO Hacer una consulta para traerme los datos
     // de este usuario
