@@ -7,7 +7,7 @@ app.use(express.urlencoded({
 }))
 app.engine('handlebars', exphbs())
 app.set('view engine', 'handlebars')
-const port = 3000
+// const port = 3000
 const port = process.env.PORT || 3000
 
 function isAuthenticated(user, password) {
@@ -24,33 +24,35 @@ app.get('/', function(request, response) {
 
 // POST Cuando enviamos un form (Login) /login
 // Un pagina de login
-app.get('/login', (request, response) => {
-    response.render('login')
-})
-
-app.post('/login', (request, response) => {
-    const user = request.body.user
-    const password = request.body.password
-
-    if (isAuthenticated(user, password)) {
-        // TODO Implement dashboard
-        response.redirect('/dashboard')
-    } else {
-        // TODO Mostrar un mensaje en el login en el login.handlebars
-        // TODO Meter un estilo tipo Bootstrap
-        response.send('ERROR!')
-    }
-})
-
 // Cuando alguien meta user "admin" y password "admin"
 // 1. decirme que estoy autenticado "EXITO!"
 // 2. redireccione a una pagina interna /dashboard
 // 3. si el user password no es admin admin, mostrar "ERROR!"
+app.get('/login', (request, response) => {
+    response.render('login')
+})
 
+app.get('/dashboard', (request, response) => {
+  response.render('dashboard')
+})
+
+app.post('/login', (request, response) => {
+  const user = request.body.user
+  const password = request.body.password
+
+  if (isAuthenticated(user, password)) {
+      response.redirect('/dashboard')
+  } else {
+      response.render(
+          'login',
+          {message: 'Usuario o password incorrecto'})
+  }
+})
 
 app.get('/contacto', function(request, response) {
     response.render('contact')
 })
+
 
 app.post('/contacto', function(request, response) {
     console.log(request.body.email)
@@ -59,10 +61,10 @@ app.post('/contacto', function(request, response) {
     response.send('Enviado')
 })
 
-app.get('/:user', function(request, response) {
-    // TODO Hacer una consulta para traerme los datos
-    // de este usuario
-    response.send(`Usuario ${request.params.user}`)
+app.get('/users/:user', function(request, response) {
+  // TODO Hacer una consulta para traerme los datos
+  // de este usuario
+  response.send(`Usuario ${request.params.user}`)
 })
 
 app.listen(port, function() {
