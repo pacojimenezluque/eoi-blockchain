@@ -11,8 +11,8 @@ app.get('/', function(request, response) {
   response.render('index')
 })
 
-app.get('/hola', function(request, response) {
-  response.render('hola')
+app.get('/contact', function(request, response) {
+  response.render('contact')
 })
 
 app.post('/hola', function(request, response) {
