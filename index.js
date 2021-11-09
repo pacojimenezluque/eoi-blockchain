@@ -28,6 +28,8 @@ app.get('/', function(request, response) {
 // 1. decirme que estoy autenticado "EXITO!"
 // 2. redireccione a una pagina interna /dashboard
 // 3. si el user password no es admin admin, mostrar "ERROR!"
+
+
 app.get('/login', (request, response) => {
     response.render('login')
 })
@@ -48,37 +50,62 @@ app.post('/login', (request, response) => {
         )
     }
 })
+// Nueva pagina /about, en el menu salga About (/about)
+// Dentro de esa pagina, un titulo (h1), un parrafo, un input para suscribirme
+// a una newsletter
+// Cuando meta mi email y le de al boton de suscribir, me sale un mensaje de exito
+// en esa pagina de "suscrito correctamente"
+app.get('/about', (request, response) => {
+    response.render('about')
+})
+
+app.post('/about', (request, response) => {
+    response.render('about', {message: 'Te has suscrito!', message_error: false})
+})
 
 app.get('/dashboard', (request, response) => {
     response.render('dashboard')
 })
 
+app.get('/cards', (request, response) => {
+    response.render(
+        'cards',
+        {cards: [
+            {
+             id: 1,
+             name: 'miau',
+             description: 'Un descripcion',
+             price: 0.012,
+             avatar: ''
+            },
+            {
+             id: 2,
+             name: 'Pepe',
+             description: 'Description 2',
+             price: 0.13,
+             avatar: ''
+            },
+            {
+             id: 3,
+             name: 'Senior X',
+             description: 'Description 3',
+             price: 0.13,
+             avatar: ''
+            }
+        ]}
+    )
+})
 
 app.get('/contacto', function(request, response) {
     response.render('contact')
 })
 
 app.post('/contacto', function(request, response) {
-    console.log(request.body.email)
-    console.log(request.body.message)
     // TODO Enviar mail con sendgrid
     response.render(
         'contact',
         {message: 'Mensaje enviado!', message_error: false}
     )
-})
-
-app.get('/about', function(request, response) {
-  response.render('about')
-})
-
-app.post('/about', function(request, response) {
-  console.log(request.body.email)
-  // TODO Enviar mail con sendgrid
-  response.render(
-      'about',
-      {message: 'Te has suscrito', message_error: false}
-  )
 })
 
 app.get('/users/:user', function(request, response) {
