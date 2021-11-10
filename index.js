@@ -1,12 +1,16 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 
+const { Card, CardRepository } = require('./models/card')
+
 const app = express()
+const hbs = exphbs()
+
 app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.static(__dirname + '/public'));
-app.engine('handlebars', exphbs())
+app.engine('handlebars', hbs)
 app.set('view engine', 'handlebars')
 const port = process.env.PORT || 3000
 
@@ -14,6 +18,8 @@ function isAuthenticated(user, password) {
     // TODO Comprobar en base de datos el usuario
     return user == 'admin' && password == 'admin'
 }
+
+// https://avatars.dicebear.com/api/human/loquesea.svg
 
 // Las vistas de mi web
 // GET PUT POST DELETE - API
@@ -70,29 +76,7 @@ app.get('/dashboard', (request, response) => {
 app.get('/cards', (request, response) => {
     response.render(
         'cards',
-        {cards: [
-            {
-             id: 1,
-             name: 'miau',
-             description: 'Un descripcion',
-             price: 0.012,
-             avatar: ''
-            },
-            {
-             id: 2,
-             name: 'Pepe',
-             description: 'Description 2',
-             price: 0.13,
-             avatar: ''
-            },
-            {
-             id: 3,
-             name: 'Senior X',
-             description: 'Description 3',
-             price: 0.13,
-             avatar: ''
-            }
-        ]}
+        {cards: new CardRepository().getCards()}
     )
 })
 
