@@ -1,7 +1,8 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 
-const { Card, CardRepository } = require('./models/card')
+const { CardRepository, Card } = require('./models/card')
+const { DatabaseService } = require('./services/database')
 
 const app = express()
 const hbs = exphbs()
@@ -14,12 +15,17 @@ app.engine('handlebars', hbs)
 app.set('view engine', 'handlebars')
 const port = process.env.PORT || 3000
 
+const db = new DatabaseService()
+
+if(!db.exists()) {
+    db.init()
+}
+
 function isAuthenticated(user, password) {
     // TODO Comprobar en base de datos el usuario
     return user == 'admin' && password == 'admin'
 }
 
-// https://avatars.dicebear.com/api/human/loquesea.svg
 
 // Las vistas de mi web
 // GET PUT POST DELETE - API
@@ -78,6 +84,33 @@ app.get('/cards', (request, response) => {
         'cards',
         {cards: new CardRepository().getCards()}
     )
+})
+
+app.get('/cards/:id', (request, response) => {
+    const card = db.findOne(
+        'cards',
+        request.params.id)
+    response.render('card', {card: card})
+})
+
+app.post('/cards', (request, response) => {
+    const cardName = request.body.name
+    const description = request.body.description
+    const price = request.body.price
+    // TODO Comprobar si es vacio y si es asi
+    // mostrar un error
+
+    const newCard = new Card(
+        cardName, description, price)
+
+    db.storeOne('cards', newCard)
+
+    response.redirect('/cards')
+})
+
+app.get('/delete_card/:id', (request, response) => {
+    db.removeOne('cards', request.params.id)
+    response.redirect('/cards')
 })
 
 app.get('/contacto', function(request, response) {

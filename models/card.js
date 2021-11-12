@@ -1,54 +1,25 @@
-const {AvatarService} = require('../services/avatar')
+const { v4: uuidv4 } = require('uuid')
+
+const { DatabaseService } = require('../services/database')
+const { AvatarService } = require('../services/avatar')
 
 class CardRepository {
     constructor() {}
 
     getCards() {
-        const avatar = new AvatarService()
-        return [
-            {
-             id: 1,
-             name: 'miau',
-             description: 'Un descripcion',
-             price: 0.012,
-             avatar: avatar.getUniqueAvatarFromName('pepe')
-            },
-            {
-             id: 2,
-             name: 'Pepe',
-             description: 'Description 2',
-             price: 0.13,
-             avatar: avatar.getUniqueAvatarFromName('batman')
-            },
-            {
-             id: 3,
-             name: 'Senior X',
-             description: 'Description 3',
-             price: 0.13,
-             avatar: avatar.getUniqueAvatarFromName('supermann')
-            },
-            {
-             id: 4,
-             name: 'Superman',
-             description: 'Description 3',
-             price: 0.13,
-             avatar: avatar.getUniqueAvatarFromName('wonder woman')
-            },
-            {
-             id: 5,
-             name: 'Thanos',
-             description: 'Description 3',
-             price: 0.13,
-             avatar: avatar.getUniqueAvatarFromName('pikachu')
-            }
-        ]
+        const database = new DatabaseService()
+        return database.get('cards')
     }
 }
 
 
 class Card {
-    constructor() {
-        console.log('Cargando Card')
+    constructor(cardName, description, price) {
+        this.id = uuidv4()
+        this.name = cardName
+        this.description = description
+        this.price = price
+        this.avatar = new AvatarService().getAvatarFromName(this.id)
     }
 }
 
