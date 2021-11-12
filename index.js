@@ -1,5 +1,6 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
+const _ = require ('underscore')
 
 const { CardRepository, Card } = require('./models/card')
 const { DatabaseService } = require('./services/database')
@@ -90,15 +91,35 @@ app.get('/cards/:id', (request, response) => {
     const card = db.findOne(
         'cards',
         request.params.id)
+    if (_.isEmpty (card)) {
+        response.render(
+            'cards',
+            {
+                message: 'La carta no existe',
+                message_error: true
+            }
+        )
+    } else {
+
     response.render('card', {card: card})
+
+    }
 })
 
 app.post('/cards', (request, response) => {
     const cardName = request.body.name
     const description = request.body.description
     const price = request.body.price
-    // TODO Comprobar si es vacio y si es asi
-    // mostrar un error
+
+    if (cardName === '' || description === '' || price=== '') {
+        response.render(
+            'cards',
+            {
+                message: 'No has rellenado todos los campos',
+                message_error: true
+            }
+        )
+    } else {
 
     const newCard = new Card(
         cardName, description, price)
@@ -106,11 +127,17 @@ app.post('/cards', (request, response) => {
     db.storeOne('cards', newCard)
 
     response.redirect('/cards')
+    }
 })
 
 app.get('/delete_card/:id', (request, response) => {
     db.removeOne('cards', request.params.id)
     response.redirect('/cards')
+})
+
+app.post('/delete_card/:id', (request, response) => {
+    
+
 })
 
 app.get('/contacto', function(request, response) {

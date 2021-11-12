@@ -44,16 +44,25 @@ class DatabaseService {
         return newData
     }
 
+    removeOne (key, instanceId) {
+        const elementList = this.get(key)
+        const itemToRemoveIndex = elementList.findIndex(item => item.id === instanceId) 
+        elementList.splice(itemToRemoveIndex, 1)
+
+        this.store(key, elementList)
+    }
+
+    findOne(key, instanceId) {
+        const elementList = this.get(key)
+        return elementList.find(item => item.id === instanceId)
+    }
+
     // Toma los datos basado en esta clave
     get(key) {
         const dbData = JSON.parse(fs.readFileSync(this.DB_FILE_PATH))
         return dbData[key]
     }
 
-    // TODO Eliminar un objeto??? removeOne('cards')
-    removeOne(key, instanceId) {
-        // TODO
-    }
 }
 
 module.exports = {
