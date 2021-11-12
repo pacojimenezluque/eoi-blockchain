@@ -1,6 +1,5 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
-const _ = require ('underscore')
 
 const { CardRepository, Card } = require('./models/card')
 const { DatabaseService } = require('./services/database')
@@ -25,6 +24,10 @@ if(!db.exists()) {
 function isAuthenticated(user, password) {
     // TODO Comprobar en base de datos el usuario
     return user == 'admin' && password == 'admin'
+}
+
+function checkValidCardValues(cardName, description, price) {
+    return cardName && description && price
 }
 
 
@@ -91,35 +94,32 @@ app.get('/cards/:id', (request, response) => {
     const card = db.findOne(
         'cards',
         request.params.id)
-    if (_.isEmpty (card)) {
-        response.render(
-            'cards',
-            {
-                message: 'La carta no existe',
-                message_error: true
-            }
-        )
-    } else {
+
+    if (!card) {
+        response.status(404).send()
+        return
+    }
 
     response.render('card', {card: card})
-
-    }
 })
 
 app.post('/cards', (request, response) => {
     const cardName = request.body.name
     const description = request.body.description
     const price = request.body.price
-
-    if (cardName === '' || description === '' || price=== '') {
-        response.render(
+    // TODO Comprobar si es vacio y si es asi
+    // mostrar un error
+    if(!checkValidCardValues(cardName, description, price)) {
+        response.status(400).render(
             'cards',
             {
-                message: 'No has rellenado todos los campos',
+                cards: new CardRepository().getCards(),
+                message: 'Necesitamos que rellenes todos los campos para crear la carta',
                 message_error: true
             }
         )
-    } else {
+        return
+    }
 
     const newCard = new Card(
         cardName, description, price)
@@ -127,17 +127,11 @@ app.post('/cards', (request, response) => {
     db.storeOne('cards', newCard)
 
     response.redirect('/cards')
-    }
 })
 
 app.get('/delete_card/:id', (request, response) => {
     db.removeOne('cards', request.params.id)
     response.redirect('/cards')
-})
-
-app.post('/delete_card/:id', (request, response) => {
-    
-
 })
 
 app.get('/contacto', function(request, response) {

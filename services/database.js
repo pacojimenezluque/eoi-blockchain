@@ -28,9 +28,30 @@ class DatabaseService {
             newData[key].push(instance)
         }
 
-        fs.writeFileSync(this.DB_FILE_PATH, JSON.stringify(newData))
+        fs.writeFileSync(this.DB_FILE_PATH, JSON.stringify(newData, null, '\t'))
 
         return newData
+    }
+
+    // Guarda los datos en la clave key
+    store(key, data) {
+        const dbData = JSON.parse(fs.readFileSync(this.DB_FILE_PATH))
+        let newData = { ...dbData}
+        newData[key] = data
+
+        fs.writeFileSync(this.DB_FILE_PATH, JSON.stringify(newData, null, '\t'))
+
+        return newData
+    }
+
+    // TODO Eliminar un objeto??? removeOne('cards')
+    removeOne(key, instanceId) {
+        const elementList = this.get(key)
+        const itemToRemoveIndex = elementList.findIndex(
+            item => item.id === instanceId)
+        elementList.splice(itemToRemoveIndex, 1)
+
+        this.store(key, elementList)
     }
 
     // Guarda los datos en la clave key
@@ -44,14 +65,6 @@ class DatabaseService {
         return newData
     }
 
-    removeOne (key, instanceId) {
-        const elementList = this.get(key)
-        const itemToRemoveIndex = elementList.findIndex(item => item.id === instanceId) 
-        elementList.splice(itemToRemoveIndex, 1)
-
-        this.store(key, elementList)
-    }
-
     findOne(key, instanceId) {
         const elementList = this.get(key)
         return elementList.find(item => item.id === instanceId)
@@ -62,7 +75,6 @@ class DatabaseService {
         const dbData = JSON.parse(fs.readFileSync(this.DB_FILE_PATH))
         return dbData[key]
     }
-
 }
 
 module.exports = {
