@@ -1,5 +1,6 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
+const morgan = require('morgan')
 
 const { CardRepository, Card } = require('./models/card')
 const { DatabaseService } = require('./services/database')
@@ -10,6 +11,7 @@ const hbs = exphbs()
 app.use(express.urlencoded({
     extended: true
 }))
+app.use(morgan('dev'))
 app.use(express.static(__dirname + '/public'));
 app.engine('handlebars', hbs)
 app.set('view engine', 'handlebars')

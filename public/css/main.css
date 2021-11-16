@@ -1,11 +1,12 @@
-a {
-    color: rgb(5, 163, 97)
-}
-
 .navbar {
-    margin-bottom: 20px
+    margin-bottom: 20px;
 }
 
 .card {
-    margin-top: 15px
+    margin-top: 15px;
+}
+
+.card-detail-img {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
